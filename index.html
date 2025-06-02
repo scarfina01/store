@@ -343,6 +343,7 @@
             height: 160px;
             overflow: hidden;
             border-bottom: 1px solid rgba(0,0,0,0.05);
+            cursor: pointer;
         }
         
         .product-image {
@@ -1593,7 +1594,7 @@
     <div class="footer">
         <p>© 2025 Scarfina. All Rights Reserved.</p>
         <div class="social-icons">
-            <a href="https://wa.me/201156823048" target="_blank" class="social-icon whatsapp">
+            <a href="https://wa.me/201156310035" target="_blank" class="social-icon whatsapp">
                 <i class="fab fa-whatsapp"></i>
             </a>
             <a href="https://www.instagram.com/scarfina31?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" class="social-icon instagram">
@@ -1639,21 +1640,7 @@
                 hasOffer: true,
                 soldOut: false
             },              
-{
-    "id": "3",
-    "name": "aaa",
-    "price": 160,
-    "oldPrice": 200,
-    "category": "printed",
-    "images": [
-        "https://i.postimg.cc/hvLmYcZK/Screenshot-2025-06-02-21-54-24-924-edit-com-instagram-android.jpg",
-        "https://i.postimg.cc/prb8kpZ0/Screenshot-2025-06-02-21-54-43-265-edit-com-instagram-android.jpg"
-    ],
-    "discount": "20% OFF",
-    "isBestSeller": true,
-    "hasOffer": true,
-    "soldOut": false
-}
+
         ];
 
         // Cart and Wishlist Variables
@@ -1806,7 +1793,7 @@
                     </button>
                     <div class="product-image-container" data-id="${product.id}">
                         ${product.images.map((img, index) => `
-                            <img src="${img}" alt="${product.name}" class="product-image ${index === 0 ? '' : 'secondary'}">
+                            <img src="${img}" alt="${product.name}" class="product-image ${index === 0 ? '' : 'secondary'}" data-product-id="${product.id}" data-image-index="${index}">
                         `).join('')}
                         <button class="product-image-nav product-image-prev" data-id="${product.id}">
                             <i class="fas fa-chevron-right"></i>
@@ -1848,6 +1835,20 @@
                     showNotification('This product is sold out!');
                 });
             });
+            
+            // Add click events to product images for fullscreen view
+            document.querySelectorAll('.product-image').forEach(img => {
+                img.addEventListener('click', function(e) {
+                    // Prevent triggering when clicking navigation buttons
+                    if (e.target.classList.contains('product-image-nav')) return;
+                    
+                    const productId = this.dataset.productId;
+                    const product = products.find(p => p.id === productId);
+                    if (product) {
+                        openFullscreen(this.src);
+                    }
+                });
+            });
         }
 
         // Show Custom Notification
@@ -1879,7 +1880,8 @@
         // Setup Image Sliders
         function setupImageSliders() {
             document.querySelectorAll('.product-image-nav').forEach(btn => {
-                btn.addEventListener('click', function() {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation(); // Prevent triggering the fullscreen click
                     const productId = this.dataset.id;
                     const container = document.querySelector(`.product-image-container[data-id="${productId}"]`);
                     const images = container.querySelectorAll('.product-image');
@@ -1947,15 +1949,6 @@
             closeFeedbackBtn.addEventListener('click', closeFeedbackModal);
             
             // Fullscreen image viewer
-            document.querySelectorAll('.feedback-image').forEach(img => {
-                img.addEventListener('click', function() {
-                    fullscreenImage.src = this.src;
-                    fullscreenViewer.classList.add('active');
-                    overlay.classList.add('active');
-                    document.body.style.overflow = 'hidden';
-                });
-            });
-            
             closeFullscreenBtn.addEventListener('click', closeFullscreen);
             overlay.addEventListener('click', closeFullscreen);
             
@@ -2072,6 +2065,21 @@
             });
         }
 
+        // Open Fullscreen Image
+        function openFullscreen(imageSrc) {
+            fullscreenImage.src = imageSrc;
+            fullscreenViewer.classList.add('active');
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Close Fullscreen Image
+        function closeFullscreen() {
+            fullscreenViewer.classList.remove('active');
+            overlay.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
         // Open Feedback Modal
         function openFeedbackModal() {
             feedbackModal.classList.add('open');
@@ -2088,21 +2096,6 @@
             document.body.style.overflow = 'auto';
         }
 
-        // Open Fullscreen Image
-        function openFullscreen(imageSrc) {
-            fullscreenImage.src = imageSrc;
-            fullscreenViewer.classList.add('active');
-            overlay.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-
-        // Close Fullscreen Image
-        function closeFullscreen() {
-            fullscreenViewer.classList.remove('active');
-            overlay.classList.remove('active');
-            document.body.style.overflow = 'auto';
-        }
-
         // Set Active Menu
         function setActiveMenu(activeId) {
             document.querySelectorAll('.menu-item').forEach(item => {
@@ -2112,8 +2105,7 @@
         }
 
         // Toggle Dark Mode
-  // Toggle Dark Mode
-  function toggleDarkMode() {
+        function toggleDarkMode() {
             document.body.classList.toggle('dark-mode');
             const isDarkMode = document.body.classList.contains('dark-mode');
             localStorage.setItem('darkMode', isDarkMode);
@@ -2396,7 +2388,7 @@
             message += `Address: ${currentUser.address}\n\n`;
             message += `Thank you for your order!`;
             
-            window.open(`https://wa.me/201156823048?text=${encodeURIComponent(message)}`, '_blank');
+            window.open(`https://wa.me/201156310035?text=${encodeURIComponent(message)}`, '_blank');
         }
         initStore();
     </script>
